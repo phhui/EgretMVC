@@ -9,12 +9,11 @@
 	],
 	"game": [
 		"bin-debug/pqmvc/PqMvc.js",
-		"bin-debug/pqmvc/PqProxy.js",
 		"bin-debug/pqmvc/PqView.js",
 		"bin-debug/pqmvc/PqController.js",
 		"bin-debug/pqmvc/PqMgr.js",
+		"bin-debug/pqmvc/PqProxy.js",
 		"bin-debug/module/maps/MapsProxy.js",
-		"bin-debug/View.js",
 		"bin-debug/core/LayerMgr.js",
 		"bin-debug/core/LoadMgr.js",
 		"bin-debug/core/Register.js",
@@ -23,7 +22,7 @@
 		"bin-debug/module/maps/MapsCmd.js",
 		"bin-debug/module/maps/MapsController.js",
 		"bin-debug/module/maps/MapsMgr.js",
-		"bin-debug/module/maps/MapsView.js",
+		"bin-debug/pqtools/UiHelper.js",
 		"bin-debug/pqmvc/Config.js",
 		"bin-debug/pqmvc/ConfigVo.js",
 		"bin-debug/pqmvc/DataHealper.js",
@@ -36,6 +35,6 @@
 		"bin-debug/Main.js",
 		"bin-debug/pqtools/Timing.js",
 		"bin-debug/pqtools/Tips.js",
-		"bin-debug/pqtools/UiHelper.js"
+		"bin-debug/module/maps/MapsView.js"
 	]
 }
