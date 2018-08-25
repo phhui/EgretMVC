@@ -1,0 +1,20 @@
+{
+	"groups": [
+		{
+			"keys": "grass_jpg,maps_module",
+			"name": "preload"
+		}
+	],
+	"resources": [
+		{
+			"name": "grass_jpg",
+			"type": "image",
+			"url": "assets/grass.jpg"
+		},
+		{
+			"name": "maps_module",
+			"type": "json",
+			"url": "config/maps.json"
+		}
+	]
+}
