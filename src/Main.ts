@@ -1,14 +1,12 @@
 class Main extends egret.DisplayObjectContainer {
     public constructor() {
         super();
+        egret.ImageLoader.crossOrigin = "*";
         this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
 
     private onAddToStage(event: egret.Event) {
-
         egret.lifecycle.addLifecycleListener((context) => {
-            // custom lifecycle plugin
-
             context.onUpdate = () => {
 
             }
@@ -22,9 +20,7 @@ class Main extends egret.DisplayObjectContainer {
             egret.ticker.resume();
         }
 
-        this.runGame().catch(e => {
-            console.log(e);
-        })
+        this.runGame();
     }
     private async runGame() {
         await this.loadResource();
@@ -32,14 +28,12 @@ class Main extends egret.DisplayObjectContainer {
     }
     private async loadResource() {
         try {
-            let loading = new Loading();
-            this.stage.addChild(loading);
-            loading.x = this.stage.stageWidth / 2 - loading.width / 2;
-            loading.y = this.stage.stageHeight / 2 - 15;
-            loading.show();
+            this.stage.addChild(Loading.self);
+            Loading.self.x = this.stage.stageWidth / 2 - Loading.self.width / 2;
+            Loading.self.y = this.stage.stageHeight / 2 - 15;
+            Loading.self.show();
             await RES.loadConfig("resource/default.res.json", "resource/");
-            await RES.loadGroup("preload", 0, loading);
-            loading.close();
+            await RES.loadGroup("preload", 0, Loading.self);
         }
         catch (e) {
             console.error(e);
@@ -50,6 +44,6 @@ class Main extends egret.DisplayObjectContainer {
         let lm:LayerMgr=new LayerMgr();
         this.addChild(lm);
         new Register();
-        EventHelper.call(MapsCmd.SHOW_WINDOW);
+        EventHelper.call(HomeCmd.SHOW_WINDOW);
     }
 }

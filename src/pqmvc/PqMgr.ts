@@ -23,8 +23,8 @@ class PqMgr extends PqMvc{
 	protected get EventList():Array<any>{
 		return [];
 	}
-	protected regProxy(name:string,c:string):void{
-		this.proxyDict[name]=Object.create(window[c].prototype);
+	protected regProxy(name:string,prototype:any):void{
+		this.proxyDict[name]=prototype;
 		this.proxyDict[name].Mgr=this;
 		this.proxyDict[name].init();
 	}
@@ -36,8 +36,8 @@ class PqMgr extends PqMvc{
 	public getProxy(name:string):any{
 		return this.proxyDict[name];
 	}
-	protected regController(name:string):void{
-		this.controlDict[name]=Object.create(window[name].prototype);
+	protected regController(name:string,prototype:any):void{
+		this.controlDict[name]=prototype;
 		this.controlDict[name].Mgr=this;
 	}
 	public control(name:string,param:Object=null,type:string=null):void{

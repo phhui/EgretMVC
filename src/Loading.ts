@@ -37,11 +37,13 @@
     }
     private round(e: egret.Event) {
         if (this.isClose) {
+            return;
             this.alpha -= 0.01;
             if (this.alpha <= 0) {
                 this.removeEventListener(egret.Event.ENTER_FRAME, this.round, this);
                 if (this.parent) this.parent.removeChild(this);
                 this.isClose = false;
+                return;
             }
         } else {
             if (this.alpha < 1) this.alpha += 0.01;

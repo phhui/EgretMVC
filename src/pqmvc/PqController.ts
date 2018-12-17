@@ -2,8 +2,8 @@ class PqController implements IControl{
 	//static NAME:String="继承此类必需定义该NAME，且名字和文件名一样,如文件名为XXController,则NAME值为XXController";
 	private md:PqMgr;
 	private _inited:Boolean=false;
-	private delayList:Array<any>=[];
 	/**等待处理的事件列表，inited为false时所有事件都存储在这里，为true后遍历触发**/
+	protected delayList:Array<any>=[];
 	protected eventList:Array<any>=[];
 	protected btnNameList: Array<any> = [];
 	protected funcList: Array<any> = [];
@@ -16,17 +16,18 @@ class PqController implements IControl{
 		if(this.md!=null)throw new Error("PqMgr已赋值");
 		this.md=m;
 	}
-	public get inited():Boolean	{
+	protected get inited():Boolean	{
 		return this._inited;
 	}
-	public set inited(value:Boolean){
+	protected set inited(value:Boolean){
 		this._inited = value;
-		if(value){
+		if(value&&this.delayList){
 			while(this.delayList.length>0){
 				this.execute(this.delayList[0][1],this.delayList[0][0])
 				this.delayList.shift();
 			}
 		}
+		this.registerEvent();
 	}
 	/**发送指令到模块内部command处理**/
 	public command(name:string,param:Object=null,type:string=null):void{
@@ -74,9 +75,8 @@ class PqController implements IControl{
 	public execute(param:Object=null, type:string=null):void
 	{
 		// TODO Auto-generated method stub
-		this.ui=new PqView();
+		this.ui=new PqView(null);
         this.ui.touchEnabled = true;
-		this.registerEvent();
 	}
 	protected registerEvent(){
         this.ui.addEventListener(egret.TouchEvent.TOUCH_TAP, this.gameClick,this);

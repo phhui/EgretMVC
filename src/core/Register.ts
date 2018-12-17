@@ -4,6 +4,6 @@ class Register{
     }
     private reg(){
         new LoadMgr();
-        new MapsMgr();
+        new HomeMgr();
     }
 }

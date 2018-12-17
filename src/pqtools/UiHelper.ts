@@ -5,10 +5,8 @@ class UiHelper extends egret.DisplayObjectContainer{
     }
     public createTxt(param:Object): egret.TextField {
         var txt: egret.TextField = new egret.TextField();
-        if (param["color"]) txt.textColor = param["color"];
-        else txt.textColor = 0x000000;
-        if (param["size"]) txt.size = param["size"];
-        else txt.size = 12;
+        txt.textColor = param["color"]||0x000000;
+        txt.size = param["size"]||12;
         if (param["align"]) txt.textAlign = param["align"];
         if (param["bold"] != null) txt.bold = param["bold"];
         if (param["name"]) txt.name = param["name"];
@@ -22,6 +20,9 @@ class UiHelper extends egret.DisplayObjectContainer{
         if (param["parent"]) param["parent"].addChild(txt);
         if (param["type"]) txt.type = param["type"];
         if (param["text"]) txt.text = param["text"];
+        if (param["font"]) txt.fontFamily = param["font"];
+		if(param["displayAsPassword"])txt.displayAsPassword=param["displayAsPassword"];
+        if(param["border"])txt.border=param["border"];
         if (param["parent"]) param["parent"].addChild(txt);
         return txt;
     }
@@ -120,5 +121,19 @@ class UiHelper extends egret.DisplayObjectContainer{
             sp.graphics.drawEllipse(x, y, w, h);
         }
         return sp;
+	}
+	/**描边**/
+    static filter(sp:egret.DisplayObject,color:any=0x000000,alpha:number=1,blurX:number=2.0,blurY:number=2.0,strength:number=1,quality:number=1,inner:boolean=false,knockout:boolean=false):void{
+		var tg:egret.GlowFilter=new egret.GlowFilter(color,alpha,blurX,blurY,strength,quality,inner,knockout);
+		sp.filters=[tg];
+	}
+	/**移除描边**/
+	static unfilter(sp:egret.DisplayObject):void{
+		sp.filters=null;
+	}
+	static grayFilter(sp:egret.DisplayObject):void{
+		if(!sp)return;
+		var cm:egret.ColorMatrixFilter = new egret.ColorMatrixFilter([0.3086,0.6094,0.082,0,0,0.3086,0.6094,0.082,0,0,0.3086,0.6094,0.082,0,0,0,0,0,1,0]);
+		sp.filters=[cm];
 	}
 }

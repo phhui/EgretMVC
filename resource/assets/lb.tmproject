@@ -1,0 +1,27 @@
+{
+    "options": {
+        "useExtension": 0,
+        "layoutGap": 1,
+        "extend": 0,
+        "layoutMath": "2",
+        "sizeMode": "free"
+    },
+    "projectName": "lb",
+    "files": [
+        "./../../../../../../C:/Users/phhui/Desktop/close.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/mask.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb1.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb0.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_15.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_24.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_12.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_26.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_31.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_39.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_37.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb_29.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb3.png",
+        "./../../../../../../C:/Users/phhui/Desktop/images/lb2.png"
+    ],
+    "version": 5
+}

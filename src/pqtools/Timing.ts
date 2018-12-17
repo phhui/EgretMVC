@@ -2,7 +2,7 @@ class Timing {
     static s: number = 10;//计时间隔(毫秒)
     static t: egret.Timer;
     static count: number = 0;
-    static dict: Object;
+    static dict: Object={};
     static inited: Boolean = false;
     constructor() {
     }
@@ -14,9 +14,9 @@ class Timing {
         this.inited = true;
     }
     /**
-     *添加倒计时监听
+     *创建计时器
      * @param key 名字
-     * @param interval 间隔(秒)必需>=0.1
+     * @param interval 间隔(秒)
      * @param callBack 回调方法
      * @param param 回调参数
      *
@@ -36,7 +36,7 @@ class Timing {
      *
      */
     static removeListen(key: string): void {
-        this.dict[key] = null;
+        if(this.dict)this.dict[key] = null;
     }
     static run(): void {
         this.count++;
