@@ -1,9 +1,9 @@
-class MapsProxy extends PqProxy{
-    static NAME:string="MapsProxy";
+class PlayerProxy extends PqProxy{
+    static NAME:string="PlayerProxy";
     public size:number=500;
 	public execute(param:any=null, type:string=null):void{
 		switch(type){
-			case MapsCmd.INIT_DATA:
+			case PlayerCmd.INIT_DATA:
 				this.initData();
 				break;
 		}

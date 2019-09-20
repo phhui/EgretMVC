@@ -1,16 +1,20 @@
 class Girl extends PqView{
-    static MODULE_NAME:string="girl_module";
     constructor(){
-        super(Girl.MODULE_NAME);
+        super("girl_module");
         this.addEventListener(egret.Event.ADDED_TO_STAGE,this.addToStage,this);
-        this.addListen(Girl.MODULE_NAME,this.createVeiew,this);
     }
     private addToStage(e:egret.Event){
-        this.uiDict["panel"].x=this.stage.stageWidth*0.25-this.uiDict["panel"].width/2;
-        //this.uiDict["panel"].y=(this.stage.stageHeight-this.uiDict["panel"].height)/2;
+        this.uiDict["panel"].x=(this.stage.stageWidth-this.uiDict["panel"].width)/2-30;
+        this.uiDict["panel"].y=(this.stage.stageHeight-this.uiDict["panel"].height)/2;
     }
     protected init() {
-        //this.call(SysCmd.LOAD_MODULE_RES,this.moduleName);
+        this.call(SysCmd.LOAD_MODULE_RES,this.moduleName);
+    }
+    protected execute(): void {
+        //this.uiDict["btn_close"].addEventListener(egret.TouchEvent.TOUCH_TAP,this.closeWindow,this);
+    }
+    public setTitle(title:string){
+        //this.uiDict["txt_title"].text=title;
     }
     private closeWindow(e:egret.TouchEvent):void{
         if(!this.parent)return;

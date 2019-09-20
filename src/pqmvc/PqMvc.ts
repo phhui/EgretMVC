@@ -6,9 +6,8 @@ class PqMvc extends egret.Sprite{
 	public addListen(event:string,func:Function,target:any){
 		EventHelper.addListener(event,func,target);
 	}
-	public call(event:string,...args){
-		args.unshift(event);
-		EventHelper.call.apply(EventHelper,args);
+	public call(event:string,param:any=null){
+		EventHelper.call(event,param);
 	}
 	public removeListen(event:string){
 		EventHelper.remove(event);

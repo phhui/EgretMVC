@@ -15,6 +15,11 @@ class ConfigVo{
     public mask: string;
 	public value: string;
     public visible: boolean;
+    /**base64数据 */
+    public data:any;
+    /**绘制背景 x,y,w,h,color 转换成数组后使用 */
+    public graphicsKey:string;
+    public graphicsVal:string;
     /**旋转角度 */
     public rotation:number;
     /**ˮ焦点位置0-1**/

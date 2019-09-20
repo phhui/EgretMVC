@@ -3,7 +3,8 @@ class Register{
         this.reg();
     }
     private reg(){
+        new MapsMgr();
         new LoadMgr();
-        new HomeMgr();
+        new PlayerMgr();
     }
 }

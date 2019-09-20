@@ -1,18 +1,21 @@
 {
-	"groups": [
-		{
-			"keys": "res,gold_png,gold_json,Home_module",
-			"name": "preload"
-		}
-	],
-	"resources": [
-		{"name":"res","type":"sheet","url":"assets/res.json"},
-		{"name":"gold_png","type":"image","url":"assets/gold.png"},
-        {"name":"gold_json","type":"json","url":"assets/gold.json"},
-		{
-			"name": "Home_module",
-			"type": "json",
-			"url": "config/home.json"
-		}
-	]
+	"groups":[
+	{
+		"keys":"base",
+		"name":"preload"
+	},{
+		"keys":"Maps_module",
+		"name":"baseRes"
+	}],
+	"resources":[
+	{
+		"name":"Maps_module",
+		"type":"json",
+		"url":"config/Maps.json"
+	},
+	{
+		"name":"base",
+		"type":"sheet",
+		"url":"assets/base.json"
+	}]
 }

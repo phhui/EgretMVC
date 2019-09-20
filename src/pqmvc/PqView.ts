@@ -12,6 +12,7 @@ class PqView extends PqMvc {
         this.addType("img", this.parsingImg, this);
         this.addType("btn", this.parsingBtn, this);
         this.addType("txt", this.parsingTxt, this);
+        this.addType("base64", this.parsingBase64, this);
         this.createVeiew();
         this.execute();
     }
@@ -24,6 +25,17 @@ class PqView extends PqMvc {
     protected addType(type: string, func: Function, target: any): void {
         this.typeFunc[type] = [func, target];
     }
+    protected getModuleRes(name:string):any{
+        return ResMgr.map[this.moduleName+"_"+name];
+    }
+    protected getSheet(name:string):any{
+        let index:number=name.indexOf('#');
+        let key:string=name.substr(0,index);
+        let subkey:string=name.substr(index+1);
+        let t= ResMgr.map[this.moduleName+"_"+key];
+        let texture:egret.Texture=(t&&t.getTexture(subkey))||RES.getRes(name);
+        return new egret.Bitmap(texture);
+    }
     protected createVeiew(): void {
         if (!this.moduleName||(!Config.getConfig(this.moduleName)&&!RES.getRes(this.moduleName))) {
             console.log(this.moduleName+" is not found");
@@ -34,7 +46,9 @@ class PqView extends PqMvc {
         for (var i: number = 0; i < n; i++) {
             var v: ConfigVo = config[i];
             var obj: any;
-            if(v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getResByUrl(v.url).Texture;
+            if(v.type=="sound"&&v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getSound(v.url);
+            else if(v.url&&v.type=="sheet")ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.map[v.url];
+            else if(v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getResByUrl(v.url).Texture;
             if (this.typeFunc[v.category]) obj = this.typeFunc[v.category][0].apply(this.typeFunc[v.category][1], [v]);
             else continue;
             if (v.name) {
@@ -60,15 +74,53 @@ class PqView extends PqMvc {
         var sp: egret.Sprite = new egret.Sprite();
         sp.name = v.name;
         if (v.url) {
-            var img: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getImg(v.sheet));
+            var img: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getSheet(v.sheet,this.moduleName));
             img.pixelHitTest = true
             sp.addChild(img);
+        }
+        if(v.graphicsKey&&v.graphicsVal){
+            let key:Array<any>=v.graphicsKey.split(',');
+            let val:Array<any>=v.graphicsVal.split(',');
+            let obj:any={};
+            for(let i:number=0;i<key.length;i++){
+                obj[key[i]]=val[i];
+            }
+            sp.graphics.beginFill(obj["color"]||0x666666,v.alpha);
+            switch(obj["type"]){
+                case "circle":
+                    sp.graphics.drawCircle(obj["x"],obj["y"],obj["radius"]);
+                    break;
+                case "ellipse":
+                    sp.graphics.drawEllipse(obj["x"],obj["y"],obj["width"],obj["height"]);
+                    break;
+                case "roundrect":
+                    sp.graphics.drawRoundRect(obj["x"],obj["y"],obj["width"],obj["height"],obj["ellipsewidth"],obj["ellipseheight"]);
+                    break;
+                case "roundtrapezoid":
+                    let p0:egret.Point=new egret.Point(parseFloat(obj["x0"]),parseFloat(obj["y0"]));
+                    let p1:egret.Point=new egret.Point(parseFloat(obj["x1"]),parseFloat(obj["y1"]));
+                    let p2:egret.Point=new egret.Point(parseFloat(obj["x2"]),parseFloat(obj["y2"]));
+                    let p3:egret.Point=new egret.Point(parseFloat(obj["x3"]),parseFloat(obj["y3"]));
+                    UiHelper.drawRoundTrapezoid(sp,[p0,p1,p2,p3],obj["color"],parseFloat(obj["alpha"]),parseFloat(obj["border"]),obj["borderColor"],obj["borderAlpha"],parseFloat(obj["radiusX"]),parseFloat(obj["radiusY"]));
+                break;
+                case "trapezoid":
+                    let pa:egret.Point=new egret.Point(parseFloat(obj["x0"]),parseFloat(obj["y0"]));
+                    let pb:egret.Point=new egret.Point(parseFloat(obj["x1"]),parseFloat(obj["y1"]));
+                    let pc:egret.Point=new egret.Point(parseFloat(obj["x2"]),parseFloat(obj["y2"]));
+                    let pd:egret.Point=new egret.Point(parseFloat(obj["x3"]),parseFloat(obj["y3"]));
+                    UiHelper.drawTrapezoid(sp,[pa,pb,pc,pd],obj["color"],parseFloat(obj["alpha"]),parseFloat(obj["border"]),obj["borderColor"],obj["borderAlpha"],parseFloat(obj["radiusX"]),parseFloat(obj["radiusY"]));
+                break;
+                default:
+                    sp.graphics.drawRect(obj["x"],obj["y"],obj["width"],obj["height"]);
+                    break;
+            }
+            sp.graphics.endFill();
         }
         return sp;
     }
     protected parsingImg(v: ConfigVo): egret.Sprite {
         var sp: egret.Sprite = new egret.Sprite();
-        var img: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getImg(v.sheet));
+        var img: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getSheet(v.sheet,this.moduleName));
         img.pixelHitTest = true
         img.smoothing=true;
         sp.addChild(img);
@@ -83,7 +135,7 @@ class PqView extends PqMvc {
     protected parsingBtn(v: ConfigVo): egret.Sprite {
         var sp: egret.Sprite = new egret.Sprite();
         if(v.url||v.sheet){
-            var bm: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getImg(v.sheet));
+            var bm: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getSheet(v.sheet,this.moduleName));
             bm.pixelHitTest = true;
             sp.addChild(bm);
         }
@@ -92,8 +144,28 @@ class PqView extends PqMvc {
         return sp;
     }
     protected parsingTxt(v: ConfigVo): egret.TextField {
-        var txt: egret.TextField = UiHelper.self.createTxt({ text: v.text, type: v.type,font:v.font,displayAsPassword:v.isPassword, align: v.align ? v.align : "left",bold:v.bold, color: v.color,border:v.border, size: v.size ? v.size : 18, touchEnabled: v.touchEnabled ? v.touchEnabled : false, width: v.width ? v.width : 120, height: v.height ? v.height : 30 });
+        var txt: egret.TextField = UiHelper.createTxt({ text: v.text, type: v.type,font:v.font,displayAsPassword:v.isPassword, align: v.align ? v.align : "left",bold:v.bold, color: v.color,border:v.border, size: v.size ? v.size : 18, touchEnabled: v.touchEnabled ? v.touchEnabled : false, width: v.width ? v.width : 120, height: v.height ? v.height : 30 });
         //if(v.filter)UiHelper.filter(txt,0x9e5012,0.5,3,3,10);
         return txt;
+    }
+    protected parsingBase64(v:ConfigVo):egret.Sprite{
+        var sp: egret.Sprite = new egret.Sprite();
+        var img: egret.Bitmap = new egret.Bitmap();
+        var saveImage: HTMLImageElement = new Image;
+        saveImage.src = v.data; 
+        let tt:egret.Texture=new egret.Texture();
+        let bm:egret.BitmapData=new egret.BitmapData(saveImage);
+        tt.bitmapData=bm;
+        img.texture=tt;
+        img.pixelHitTest = true
+        img.smoothing=true;
+        sp.addChild(img);
+        img.x = 0-img.width * (v.focusX||0);
+        img.y = 0-img.height * (v.focusY||0);
+        sp.touchChildren = false;
+        sp.touchEnabled = false;
+        sp.alpha = (v.alpha||1);
+        if (v.visible==false) sp.visible = false;
+        return sp;
     }
 }

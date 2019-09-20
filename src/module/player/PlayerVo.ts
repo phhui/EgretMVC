@@ -1,0 +1,20 @@
+class PlayerVo{
+    public name:string;
+    public id:string;
+    public sex:number=1;
+    public lv:number=1;
+    public weight:number;
+    public height:number;
+    public blood:number;
+    public speed:number;
+    /**攻击 */
+    public atk:number;
+    /**防御 */
+    public defense:number;
+    /**力量 */
+    public strength:number=1;
+    /**敏捷=体重/身高平方*0.01 */
+    public agility:number=1;
+    /**天赋 */
+    public talent:number=0;
+}

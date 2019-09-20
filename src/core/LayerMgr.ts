@@ -60,13 +60,13 @@ class LayerMgr extends PqMvc{
 		return this.layerList[i] as egret.Sprite;
 	}
 	/**添加显示对象，layer添加到指定层次，0地图,1场景，2云，3窗口，4菜单/公告 ，5进度条**/
-	public show(event:string,obj:egret.DisplayObject,layer:number=3):void{
-		if(layer==99){
+	public show(event:string,obj:egret.DisplayObject,layer:number=2):void{
+		if(layer==3){
 			this.curWinName=obj.name;
 			this.curWin=obj;
 			obj.x=(this.stage.stageWidth-obj.width)/2;
 			obj.y=(this.stage.stageHeight-obj.height)/2;
-		}3
+		}
 		this.layerList[layer].addChild(obj);
 	}
 	/**移除显示对象**/

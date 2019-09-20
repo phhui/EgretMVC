@@ -6,7 +6,7 @@
     constructor() {
         super();
     }
-    public static create(text: string, panel: egret.Sprite, x: number, y: number) {
+    public static create(text: string, panel: any, x: number, y: number) {
         var tip: Tips = new Tips();
         tip.show(text,panel,x,y);
     }
@@ -18,23 +18,20 @@
         this.init();
     }
     private init() {
-        this.txt = UiHelper.self.createTxt({ text: this.str, width: 500, height: 30, size: 30, color: 0xff0000, parent: this });
-        this.txt.x = 0 - this.txt.textWidth / 2;
-        this.alpha = 0;
-        this.addEventListener(egret.Event.ENTER_FRAME, this.showTip, this);
-        //TweenLite.to(this.txt, 1, { x: this.x, y: this.y - 100, alpha: 1, onComplete: this.updateTxt });
+        let sp:egret.Sprite=UiHelper.drawRoundRect(0,0,600,50,1,0x000000,0x000000,0.2,10);
+        sp.x=this.stage.stageWidth/2-300;
+        this.addChild(sp);
+        this.txt = UiHelper.createTxt({ text: this.str,font:"黑体",bold:true, width: this.stage.stageWidth,align:"center", height: 150, size: 36, color: 0xffffff, parent: this });
+        //UiHelper.stroke(this.txt,0x000000,1,3);
+        this.txt.y=5;
+        let ty:number=this.y-300;
+        TweenLite.to(this,0.3,{y:ty,alpha:1,onComplete:this.removeAction,target:this});
     }
-    private showTip(e: egret.Event) {
-        if (this.txt.y > - 200) {
-            this.alpha += 0.02;
-        } else {
-            this.alpha -= 0.01;
-        }
-        this.txt.y -= 4;
-        if (this.txt.y < - 400) {
-            this.removeEventListener(egret.Event.ENTER_FRAME, this.showTip, this);
-            this.parent.removeChild(this);
-            this.txt = null;
-        }
+    private removeAction(){
+        let ty:number=this.y-200;
+        TweenLite.to(this,0.3,{y:ty-200,alpha:0,visible:false,delay:800,onComplete:this.removeThis,target:this});
+    }
+    private removeThis(){
+        this.parent.removeChild(this);
     }
 }

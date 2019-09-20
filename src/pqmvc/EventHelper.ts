@@ -11,14 +11,13 @@ class EventHelper{
             this.listenList[key]=null;
         }
     }
-    static call(key:string,...args){
+    static call(key:string,param:any=null){
         if(this.listenList[key]){
             let obj=this.listenList[key];
-            args.unshift(key);
-            obj.func.apply(obj.target,args);
+            obj.func.apply(obj.target,[key,param]);
         }else{
             console.log("系统中没有针对"+key+"事件的监听！");
-            throw new Error("系统中没有针对"+key+"事件的监听！");
+            //throw new Error("系统中没有针对"+key+"事件的监听！");
         }
     }
     static send(e: any, eventType: Array<any>, func: Array<any>, target: any) {

@@ -13,7 +13,7 @@ class PqController implements IControl{
 
     }
 	public set Mgr(m:PqMgr){
-		if(this.md!=null)throw new Error("PqMgr已赋值");
+		if(this.md!=null)throw new Error("MmMgr已赋值");
 		this.md=m;
 	}
 	protected get inited():Boolean	{

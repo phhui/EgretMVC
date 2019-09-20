@@ -5,4 +5,5 @@ class SysCmd{
 
     static LOAD_CONFIG:string="load_config";
     static LOAD_MODULE_RES:string="load_module_res";
+    static CONFIG_COMPLETE:string="load_complete";
 }

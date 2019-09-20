@@ -1,8 +1,8 @@
 class Timing {
-    static s: number = 10;//计时间隔(毫秒)
+    static s: number = 17;//计时间隔(毫秒) 17为最佳平滑移动间隔
     static t: egret.Timer;
     static count: number = 0;
-    static dict: Object={};
+    static dict: Object;
     static inited: Boolean = false;
     constructor() {
     }
@@ -24,8 +24,21 @@ class Timing {
     static addListen(key: string, interval: number, callBack: Function, target: any, param: any = null, execNum: number = -1): void {
         if (!this.inited) this.init()
         if (this.dict[key]) return;
-        if (interval * 1000 < this.s) interval = this.s;
+        if (interval * 1000 < this.s) interval = this.s*0.001;
         this.dict[key] = { key:key,func: callBack, target: target, param: param, time: this.count, interval: interval * 1000, execNum: execNum };
+    }
+    /**
+     *创建计时器
+     * @param key 名字
+     * @param interval 间隔(秒)
+     * @param callBack 回调方法
+     * @param param 回调参数
+     *
+     */
+    static addEnterFrame(key: string, callBack: Function, target: any, param: any = null, execNum: number = -1): void {
+        if (!this.inited) this.init()
+        if (this.dict[key]) return;
+        this.dict[key] = { key:key,func: callBack, target: target, param: param, time: this.count, interval: this.s, execNum: execNum };
     }
     static setTimeOut(key: string, interval: number, callBack: Function, target: any, param: any = null): void {
         Timing.addListen(key, interval, callBack, target, param, 1);
@@ -36,7 +49,7 @@ class Timing {
      *
      */
     static removeListen(key: string): void {
-        if(this.dict)this.dict[key] = null;
+        this.dict[key] = null;
     }
     static run(): void {
         this.count++;

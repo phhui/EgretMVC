@@ -1,20 +1,38 @@
 class HttpHelper{
-    static httprequest:egret.HttpRequest=new egret.HttpRequest();
-    static get(url:string,complete:Function,target:any,error:Function=null){
-        this.request(egret.HttpMethod.GET,url,complete,target,null,error);
+    static get(url:string,params:any,callback:Function,target:any,errFunc:Function=null){
+        let request = new egret.HttpRequest();
+        request.responseType = egret.HttpResponseType.TEXT;
+        request.open(url+"?"+HttpHelper.urlEncode(params),egret.HttpMethod.GET);
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.send();
+        request.addEventListener(egret.Event.COMPLETE,callback,target);
+        if(errFunc)request.addEventListener(egret.IOErrorEvent.IO_ERROR,errFunc,target);
+        //request.addEventListener(egret.ProgressEvent.PROGRESS,this.onGetProgress,this);
     }
-    static post(url:string,data:any,complete:Function,target:any,error:Function=null){
-        this.request(egret.HttpMethod.POST,url,complete,target,data,error);
+    static post(url:string,params:any,callback:Function,target:any,errFunc:Function=null){
+        let request = new egret.HttpRequest();
+        request.responseType = egret.HttpResponseType.TEXT;
+        request.open(url,egret.HttpMethod.POST);
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.setRequestHeader("Accept","application/json, text/plain, */*");
+        request.withCredentials=true;
+        request.send(HttpHelper.urlEncode(params));
+        request.addEventListener(egret.Event.COMPLETE,callback,target);
+        request.addEventListener(egret.IOErrorEvent.IO_ERROR,errFunc,target);
+        //request.addEventListener(egret.ProgressEvent.PROGRESS,this.onPostProgress,this);
     }
-    static request(type:string,url:string,complete:Function,target:any,data:any=null,error:Function=null){
-        this.httprequest.responseType = egret.HttpResponseType.TEXT;
-        this.httprequest.withCredentials=true;
-        this.httprequest.open(url,type);
-        //request.setRequestHeader("User-Agent","Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Mobile Safari/537.36");
-        this.httprequest.setRequestHeader("X-Requested-With","XMLHttpRequest");
-        this.httprequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-        this.httprequest.send(data);
-        this.httprequest.addEventListener(egret.Event.COMPLETE,complete,target);
-        if(error)this.httprequest.addEventListener(egret.IOErrorEvent.IO_ERROR,error,target);
+    static urlEncode(param:any, key:string=null, encode:boolean=true) {
+        if(param==null) return '';
+        var paramStr = '';
+        var t = typeof (param);
+        if (t == 'string' || t == 'number' || t == 'boolean') {
+            paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(param) : param);
+        } else {
+            for (var i in param) {
+                var k = key == null ? i : key + (param instanceof Array ? '[' + i + ']' : '.' + i);
+                paramStr += HttpHelper.urlEncode(param[i], k, encode);
+            }
+        }
+        return paramStr;
     }
 }

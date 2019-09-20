@@ -1,12 +1,14 @@
 class UiHelper extends egret.DisplayObjectContainer{
-	static self: UiHelper = new UiHelper();
     constructor() {
         super();
     }
-    public createTxt(param:Object): egret.TextField {
+    static createTxt(param:Object): egret.TextField {
         var txt: egret.TextField = new egret.TextField();
-        txt.textColor = param["color"]||0x000000;
-        txt.size = param["size"]||12;
+        if (param["color"]) txt.textColor = param["color"];
+        else txt.textColor = 0x000000;
+        if (param["size"]) txt.size = param["size"];
+        else txt.size = 12;
+        if(param["font"])txt.fontFamily=param["font"];
         if (param["align"]) txt.textAlign = param["align"];
         if (param["bold"] != null) txt.bold = param["bold"];
         if (param["name"]) txt.name = param["name"];
@@ -20,11 +22,30 @@ class UiHelper extends egret.DisplayObjectContainer{
         if (param["parent"]) param["parent"].addChild(txt);
         if (param["type"]) txt.type = param["type"];
         if (param["text"]) txt.text = param["text"];
-        if (param["font"]) txt.fontFamily = param["font"];
-		if(param["displayAsPassword"])txt.displayAsPassword=param["displayAsPassword"];
-        if(param["border"])txt.border=param["border"];
         if (param["parent"]) param["parent"].addChild(txt);
         return txt;
+    }
+    static stroke(obj:any,color:any,blur:number,strength:number){
+        let n=new egret.GlowFilter(color,1,blur,blur,strength,100,!1,!1);
+        obj.filters=[n]
+    }
+    static filter(obj:any,color:any=0xfffe3d, alpha:number=0.8, blurX:number=35, blurY:number=35,strength:number=2, quality:number=100, inner:boolean=false, knockout:boolean=false){
+        var glowFilter:egret.GlowFilter = new egret.GlowFilter( color, alpha, blurX, blurY,strength, quality, inner, knockout );
+        obj.filters=[glowFilter];
+    }
+    static grayfilter(obj:any){
+        var filter:egret.ColorMatrixFilter = new egret.ColorMatrixFilter([0.3,0.6,0,0,0,0.3,0.6,0,0,0,0.3,0.6,0,0,0,0,0,0,1,0]) ;
+        obj.filters=[filter];
+    }
+    static unfilter(obj:any){
+        obj.filters=[];
+    }
+    /**重绘图形 */
+    static reDraw(sp:egret.Sprite,color:any,alpha:number,x:number,y:number,w:number,h:number){
+        sp.graphics.clear();
+        sp.graphics.beginFill(color,alpha);
+        sp.graphics.drawRect(x,y,w,h);
+        sp.graphics.endFill();
     }
 		/**
 		 *绘制矩形
@@ -122,18 +143,55 @@ class UiHelper extends egret.DisplayObjectContainer{
         }
         return sp;
 	}
-	/**描边**/
-    static filter(sp:egret.DisplayObject,color:any=0x000000,alpha:number=1,blurX:number=2.0,blurY:number=2.0,strength:number=1,quality:number=1,inner:boolean=false,knockout:boolean=false):void{
-		var tg:egret.GlowFilter=new egret.GlowFilter(color,alpha,blurX,blurY,strength,quality,inner,knockout);
-		sp.filters=[tg];
-	}
-	/**移除描边**/
-	static unfilter(sp:egret.DisplayObject):void{
-		sp.filters=null;
-	}
-	static grayFilter(sp:egret.DisplayObject):void{
-		if(!sp)return;
-		var cm:egret.ColorMatrixFilter = new egret.ColorMatrixFilter([0.3086,0.6094,0.082,0,0,0.3086,0.6094,0.082,0,0,0.3086,0.6094,0.082,0,0,0,0,0,1,0]);
-		sp.filters=[cm];
-	}
+    static drawCurve(sp:egret.Sprite,color:number,x0:number,y0:number,x1:number,y1:number,x2:number,y2:number){
+        sp.graphics.lineStyle(1,color,1);
+        sp.graphics.moveTo(x0,y0);
+        sp.graphics.curveTo(x1,y1,x2,y2);
+    }
+    /**绘制四边形
+     * pointList:梯形四个点坐标,顺序为【左上，右上，右下，左下】
+     * backColor:梯形背景颜色
+     * alpha:透明度
+     * border:边宽
+     * borderColor:边颜色
+     * borderAlpha:边透明度
+     * radiusX:X轴弯曲长度
+     * radiusY:Y轴弯曲长度
+     */
+    static drawTrapezoid(sp:any,pointList:Array<egret.Point>,backColor: number= 0x999999, alpha: number= 0.6, border: number= 0, borderColor: number= 0x333333,borderAlpha:number=1,  radiusX: number= 20,radiusY:number=20){
+        sp.graphics.beginFill(backColor, alpha);
+        sp.graphics.lineStyle(border,borderColor,borderAlpha);
+        sp.graphics.moveTo(pointList[0].x, pointList[0].y);
+        sp.graphics.lineTo(pointList[1].x, pointList[1].y);
+        sp.graphics.lineTo(pointList[2].x, pointList[2].y);
+        sp.graphics.lineTo(pointList[3].x, pointList[3].y);
+        sp.graphics.lineTo(pointList[0].x,pointList[0].y);
+        sp.graphics.endFill();
+        //return sp;
+    }
+    /**绘制圆角四边形
+     * pointList:梯形四个点坐标,顺序为【左上，右上，右下，左下】
+     * backColor:梯形背景颜色
+     * alpha:透明度
+     * border:边宽
+     * borderColor:边颜色
+     * borderAlpha:边透明度
+     * radiusX:X轴弯曲长度
+     * radiusY:Y轴弯曲长度
+     */
+    static drawRoundTrapezoid(sp:any,pointList:Array<egret.Point>,backColor: number= 0x999999, alpha: number= 0.6, border: number= 0, borderColor: number= 0x333333,borderAlpha:number=1,  radiusX: number= 20,radiusY:number=20){
+        sp.graphics.beginFill(backColor, alpha);
+        sp.graphics.lineStyle(border,borderColor,borderAlpha);
+        sp.graphics.moveTo(pointList[0].x, pointList[0].y+radiusY);
+        sp.graphics.curveTo(pointList[0].x,pointList[0].y,pointList[0].x+radiusX,pointList[0].y);
+        sp.graphics.lineTo(pointList[1].x-radiusX, pointList[1].y);
+        sp.graphics.curveTo(pointList[1].x, pointList[1].y, pointList[1].x, pointList[1].y+radiusY);
+        sp.graphics.lineTo(pointList[2].x, pointList[2].y-radiusY);
+        sp.graphics.curveTo(pointList[2].x, pointList[2].y, pointList[2].x-radiusX, pointList[2].y);
+        sp.graphics.lineTo(pointList[3].x+radiusX, pointList[3].y);
+        sp.graphics.curveTo(pointList[3].x, pointList[3].y, pointList[3].x, pointList[3].y-radiusY);
+        sp.graphics.lineTo(pointList[0].x,pointList[0].y+radiusY);
+        sp.graphics.endFill();
+        //return sp;
+    }
 }

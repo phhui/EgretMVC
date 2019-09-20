@@ -1,0 +1,6 @@
+{"file":"base.png","frames":{
+"mgFooder":{"x":859,"y":260,"w":49,"h":49,"offX":0,"offY":0,"sourceW":49,"sourceH":49},
+"mg":{"x":1,"y":638,"w":590,"h":635,"offX":13,"offY":31,"sourceW":610,"sourceH":684},
+"grass1":{"x":593,"y":1,"w":397,"h":257,"offX":0,"offY":11,"sourceW":422,"sourceH":294},
+"grass":{"x":593,"y":260,"w":264,"h":235,"offX":0,"offY":0,"sourceW":264,"sourceH":235},
+"mg2":{"x":1,"y":1,"w":590,"h":635,"offX":13,"offY":31,"sourceW":610,"sourceH":684}}}

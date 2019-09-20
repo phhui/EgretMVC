@@ -1,11 +1,11 @@
 ﻿class Loading extends egret.Sprite {
     private panel: egret.Sprite;
+    private loadBar:egret.Sprite;
+    private pointSpList:Array<any>=[];
     private txt: egret.TextField;
-    private loadValue: string = "";
-    private pointStr: string = "......";
+    private _loadProgress: number = 0;
+    private loadBarWidth:number=0;
     private isClose: boolean = false;
-    private actionSpeed: number = 10;
-    private actionCount: number = 0;
     private static _self:Loading;
     constructor() {
         super();
@@ -15,47 +15,64 @@
         if(!this._self)this._self=new Loading();
         return this._self;
     }
+    private get loadProgress():number{
+        return this._loadProgress;
+    }
+    private set loadProgress(value:number){
+        this._loadProgress=value;
+    }
     private init() {
         this.panel = new egret.Sprite();
+        this.loadBar=UiHelper.drawRect(0,0,1,20,0,0x000000,0x666666);
+        this.panel.addChild(this.loadBar);
         this.addChild(this.panel);
-        this.txt = UiHelper.self.createTxt({ text: "loading......", width: 200, height: 30, color: 0xffffff });
-        this.panel.addChild(this.txt);
-        this.alpha = 0;
     }
-    public show() {
-        this.addEventListener(egret.Event.ENTER_FRAME, this.round, this);
+    public show(str:string="") {
+        if(str)this.setTxt(str);
+        this.loadBar.y=this.stage.stageHeight/2-10;
+        Timing.addListen("showLoadingAction",0.1,this.loading,this);
+        this.visible=true;
     }
     public close() {
         this.isClose = true;
-        this.actionCount = 0;
+        Timing.removeListen("showLoadingAction");
+        this.pointSpList=[];
+        this.txt.text="";
+        this.visible=false;
     }
-    public onProgress(current: number, total: number): void {
-        this.loadValue = (current/total).toString();
+    public update(val: number,msg:string="") {
+        this.loadProgress = val;
+        if(msg)this.setTxt(msg);
     }
-    public update(val: string) {
-        this.loadValue = val;
+    private setTxt(str:string){
+        if(!str)return;
+        if(!this.txt)this.txt=UiHelper.createTxt({text:str,y:this.stage.stageHeight/2+20,width:this.stage.stageWidth,align:"center",size:36,color:0xffffff,height:50});
+        else this.txt.text=str;
+        this.panel.addChild(this.txt);
     }
-    private round(e: egret.Event) {
-        if (this.isClose) {
-            return;
-            this.alpha -= 0.01;
-            if (this.alpha <= 0) {
-                this.removeEventListener(egret.Event.ENTER_FRAME, this.round, this);
-                if (this.parent) this.parent.removeChild(this);
-                this.isClose = false;
-                return;
-            }
-        } else {
-            if (this.alpha < 1) this.alpha += 0.01;
+    private loading() {
+        if (this.isClose)return;
+        UiHelper.reDraw(this.loadBar,0x666666,1,0,0,this.loadBarWidth,20);
+        this.loadBarWidth=this.loadProgress*this.stage.stageWidth;
+        this.createBox();
+        if(this.loadBarWidth>=this.stage.stageWidth)this.close();
+    }
+    private createBox():egret.Sprite{
+        let sp:egret.Sprite=UiHelper.drawRect(0,0,10,10,0,0,0xffffff);
+        sp.x=this.stage.stageWidth+Math.random()*100;
+        sp.y=Math.random()*this.stage.stageHeight;
+        if(this.pointSpList.length%2==1){
+            sp.x=Math.random()*this.stage.stageWidth;
         }
-        this.actionCount++;
-        if (this.actionCount % this.actionSpeed != 0) return;
-        this.txt.text = "loading" + this.pointStr + "    " + this.loadValue + (this.loadValue.length>0?"%":"");
-        if (this.pointStr.length < 6) {
-            this.pointStr += ".";
-        } else this.pointStr = ".";
-        
-        this.x = this.stage.stageWidth / 2 - this.width / 2;
-        this.y = this.stage.stageHeight / 2 - 15;
+        this.pointSpList.push(sp);
+        this.panel.addChild(sp);
+        TweenLite.to(sp,1.2,{x:this.loadBarWidth+Math.random()*50,y:this.loadBar.y+5,onComplete:this.removeBox,target:this,onCompleteParams:[sp]});
+        return sp;
+    }
+    private removeBox(...args){
+        if(args[0]&&args[0].parent){
+            args[0].parent.removeChild(args[0]);
+            this.pointSpList.shift();
+        }
     }
 }

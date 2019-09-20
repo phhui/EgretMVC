@@ -4,8 +4,8 @@ class MapsMgr extends PqMgr{
     }
     protected start():void{
 	    if(this.isStart)return;
-		//this.regProxy(BagProxy.NAME,BagProxy);
-		this.regController(MapsController.NAME);
+		this.regProxy(MapsProxy.NAME,new MapsProxy());
+		this.regController(MapsController.NAME,new MapsController());
 		this.isStart=true;
 	}
 	protected get EventList():Array<any>{

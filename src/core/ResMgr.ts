@@ -2,15 +2,28 @@ class ResMgr {
     static map: Object = {};
     constructor() {
     }
-    static getImg(name: string): egret.Bitmap {
-        var result: egret.Bitmap = new egret.Bitmap();
-        var texture: egret.Texture = RES.getRes(name);
-        if (texture == null)throw new Error("资源  "+name+"  不存在！");
-        result.texture = texture;
-        return result;
+    static getRes(name:string):egret.Bitmap{
+        if (!RES.getRes(name))throw new Error("资源  "+name+"  不存在！");
+        return new egret.Bitmap(RES.getRes(name));
     }
-    static getResByName(name:string){
-        return this.getResByUrl(name);
+    /**获取透明区域穿透资源 */
+    static getPixelHitRes(name:string):egret.Bitmap{
+        if (!RES.getRes(name))throw new Error("资源  "+name+"  不存在！");
+        var img: egret.Bitmap = ResMgr.getRes(name);
+        img.pixelHitTest = true;
+        img.smoothing=true;
+        return img;
+    }
+    static getSheet(name:string,moduleName:string=""):egret.Bitmap{
+        let index:number=name.indexOf('#');
+        let key:string=name.substr(0,index);
+        let subkey:string=name.substr(index+1);
+        let t= ResMgr.map[moduleName+"_"+key];
+        let texture:egret.Texture=(t&&t.getTexture(subkey))||RES.getRes(name);
+        return new egret.Bitmap(texture);
+    }
+    static getSound(nameOrUrl:string):egret.Sound{
+        return RES.getRes(nameOrUrl)||ResMgr.map[nameOrUrl];
     }
     static getResByUrl(url: string): any {
         if (ResMgr.map[url] == null) throw new Error("资源不存在>>"+url);
@@ -38,4 +51,4 @@ class ResMgr {
         bm.texture = $drawTexture;
         return bm;
     }
-} 
+}

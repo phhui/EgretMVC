@@ -2,7 +2,7 @@ class PqProxy implements IProxy{
 	//static NAME:String="继承此类必需定义该NAME，且名字和文件名一样,如文件名为XXProxy,则NAME值为XXProxy";
 	private md:PqMgr;
        constructor(){
-    }
+        }
 	/**初始化后会被自动执行**/
 	public init():void{}
 	public set Mgr(m:PqMgr){
@@ -15,7 +15,7 @@ class PqProxy implements IProxy{
 	}
 	/**广播**/
 	protected call(name:String,...args){
-		args.unshift(name);
+			args.unshift(name);
 		this.md.call.apply(null,args);
 	}
 	/**
