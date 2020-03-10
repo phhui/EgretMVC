@@ -26,9 +26,12 @@ class ResMgr {
         return RES.getRes(nameOrUrl)||ResMgr.map[nameOrUrl];
     }
     static getResByUrl(url: string): any {
-        if (ResMgr.map[url] == null) throw new Error("资源不存在>>"+url);
+        if (ResMgr.map[url] == null&&RES.getRes(url)){
+            console.log("资源不存在>>"+url);
+            return new egret.Bitmap();
+        }
         var bm: egret.Bitmap = new egret.Bitmap;
-        bm.texture = ResMgr.map[url];
+        bm.texture = ResMgr.map[url]||RES.getRes(url);
         return bm;
     }
     static cutResFromCache(modeuleName:string,name:string,rect:egret.Rectangle):egret.Bitmap{

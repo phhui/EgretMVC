@@ -250,14 +250,14 @@ declare module 'built-in' {
 
     /**
      * 发布策略
-     * * default : 使用 egretProperties.json 中的 exmlPublishPolicy 中的策略
      * * debug : 默认策略，用于开发环境
      * * contents : 将 EXML 的内容写入到主题文件中
      * * gjs : 将生成的JS文件写入到主题文件中
      * * commonjs : 将EXML合并为一个 CommonJS 风格的文件
      * * commonjs2 : 将EXML合并为一个含有解析方法和皮肤定义的文件，且皮肤抽离为一份配置
+     * * json : 将每个EXML文件生成一份配置
      */
-    type EXML_Publish_Policy = "default" | "debug" | "contents" | "gjs" | "commonjs" | "commonjs2"
+    type EXML_Publish_Policy = "debug" | "contents" | "gjs" | "commonjs" | "commonjs2" | "json"
 
 
 
@@ -282,9 +282,15 @@ declare module 'built-in' {
         /**
          * 是否输出转换过程
          */
-        verbose?: boolean
-
-
+        verbose?: boolean,
+        /**
+         * 其他传递的消息参数
+         */
+        info?:any
+        /**
+         * use wechat engine plugin
+         */
+        useWxPlugin?: boolean
     }
 
     /** 
@@ -317,7 +323,7 @@ declare module 'built-in' {
 
         nameSelector: (url: string) => string;
 
-        TM_Verbose:boolean;
+        TM_Verbose: boolean;
     }
 
     export class ConvertResConfigFilePlugin implements plugins.Command {
@@ -363,11 +369,13 @@ declare module 'built-in' {
 
         /**
          * 是否输出日志
+         * Whether to output the log
          */
         verbose?: boolean
 
         /**
          * 采用何种 hash 算法，目前暂时只支持 crc32
+         * What hash algorithm is used, currently only crc32 is supported
          */
         hash?: "crc32"
 
@@ -375,8 +383,16 @@ declare module 'built-in' {
         /**
          * 设置匹配规则，将指定文件进行改名
          * 该参数是个数组，允许设置多个匹配规则
+         * Set up matching rules to copy specified files to other folders
+         * This parameter is an array that allows multiple matching rules to be set
          */
         matchers: Matcher[]
+
+        /**
+         * 回调函数，返回值里包括文件的一些信息
+         * The callback function, return value includes some information about the file
+         */
+        callback?: Function
     }
 
 
@@ -391,12 +407,15 @@ declare module 'built-in' {
 
         /**
          * 是否输出日志
+         * Whether to output the log
          */
         verbose?: boolean
 
         /**
          * 设置匹配规则，将指定文件拷贝至其他文件夹
          * 该参数是个数组，允许设置多个匹配规则
+         * Set up matching rules to copy specified files to other folders
+         * This parameter is an array that allows multiple matching rules to be set
          */
         matchers: Matcher[]
     }
@@ -416,4 +435,14 @@ declare module 'built-in' {
         constructor(option: ZipPluginOptions);
     }
 
+    type MergeEuiJsonPluginOptions = {
+
+        mergeSelector?: (p: string) => string | null,
+
+        createConfig?: boolean
+    }
+    export class MergeEuiJsonPlugin implements plugins.Command {
+
+        constructor(option?: MergeEuiJsonPluginOptions);
+    }
 }

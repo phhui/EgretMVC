@@ -1,1 +1,5 @@
 bin-debug/
+bin-release/
+scripts/
+template/
+libs/

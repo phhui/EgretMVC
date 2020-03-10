@@ -23,7 +23,7 @@
     }
     private init() {
         this.panel = new egret.Sprite();
-        this.loadBar=UiHelper.drawRect(0,0,1,20,0,0x000000,0x666666);
+        this.loadBar=UiHelper.createRect(0,0,1,20,0,0x000000,0x666666);
         this.panel.addChild(this.loadBar);
         this.addChild(this.panel);
     }
@@ -52,13 +52,13 @@
     }
     private loading() {
         if (this.isClose)return;
-        UiHelper.reDraw(this.loadBar,0x666666,1,0,0,this.loadBarWidth,20);
+        UiHelper.drawRect(this.loadBar,0x666666,1,0,0,this.loadBarWidth,20);
         this.loadBarWidth=this.loadProgress*this.stage.stageWidth;
         this.createBox();
         if(this.loadBarWidth>=this.stage.stageWidth)this.close();
     }
     private createBox():egret.Sprite{
-        let sp:egret.Sprite=UiHelper.drawRect(0,0,10,10,0,0,0xffffff);
+        let sp:egret.Sprite=UiHelper.createRect(0,0,10,10,0,0,0xffffff);
         sp.x=this.stage.stageWidth+Math.random()*100;
         sp.y=Math.random()*this.stage.stageHeight;
         if(this.pointSpList.length%2==1){

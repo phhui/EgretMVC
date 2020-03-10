@@ -1,4 +1,4 @@
-class PlayerController extends PqController{
+class PlayerController extends BaseController{
     static NAME:string="PlayerController";
     private pxy:PlayerProxy;
     private bgDict:Object;

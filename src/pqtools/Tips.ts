@@ -18,7 +18,7 @@
         this.init();
     }
     private init() {
-        let sp:egret.Sprite=UiHelper.drawRoundRect(0,0,600,50,1,0x000000,0x000000,0.2,10);
+        let sp:egret.Sprite=UiHelper.createRoundRect(0,0,600,50,1,0x000000,0x000000,0.2,10);
         sp.x=this.stage.stageWidth/2-300;
         this.addChild(sp);
         this.txt = UiHelper.createTxt({ text: this.str,font:"黑体",bold:true, width: this.stage.stageWidth,align:"center", height: 150, size: 36, color: 0xffffff, parent: this });

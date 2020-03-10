@@ -1,4 +1,4 @@
-class MapsMgr extends PqMgr{
+class MapsMgr extends BaseMgr{
     constructor(){
         super();
     }

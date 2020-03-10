@@ -4,6 +4,7 @@ class ConfigVo{
     public parent: string;
     /**资源路径(如果是纹理则使用sheet,url留空) */
 	public url: string;
+    public resName:string;
     /**纹理路径(和url只能用一个，优先使用URL) */
     public sheet:string;
 	public name: string;
@@ -15,6 +16,9 @@ class ConfigVo{
     public mask: string;
 	public value: string;
     public visible: boolean;
+    public action:string;
+    /**龙骨动画使用的资源名称 */
+    public res:string;
     /**base64数据 */
     public data:any;
     /**绘制背景 x,y,w,h,color 转换成数组后使用 */
@@ -43,6 +47,10 @@ class ConfigVo{
     public type: string;
     public filter:any;
     public isPassword:boolean;
+    public backGround:boolean;
+    public backGroundColor:number;
+    public borderColor:boolean;
+    public tipText:string;
     constructor(){
     }
 } 

@@ -1,4 +1,4 @@
-class MapsProxy extends PqProxy{
+class MapsProxy extends BaseProxy{
     static NAME:string="MapsProxy";
     public size:number=500;
 	public execute(param:any=null, type:string=null):void{

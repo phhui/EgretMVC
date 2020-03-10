@@ -1,5 +1,7 @@
 class PqView extends PqMvc {
     public uiDict: Object = {};
+    public configDict:Object={};
+    private actionDict:Object={};
     protected typeFunc: Object;
     protected moduleName:string;
     /*模块资源名称，用于获取配置创建UI界面 */
@@ -7,12 +9,15 @@ class PqView extends PqMvc {
         super();
         this.moduleName=_moduleName;
         this.typeFunc = {};
-        this.init();
         this.addType("panel", this.parsingPanel, this);
         this.addType("img", this.parsingImg, this);
         this.addType("btn", this.parsingBtn, this);
+        this.addType("dg",this.parssingDg,this);
         this.addType("txt", this.parsingTxt, this);
+        this.addType("mtxt", this.parsingMTxt, this);
         this.addType("base64", this.parsingBase64, this);
+        this.addType("action",this.parsingAction,this);
+        this.init();
         this.createVeiew();
         this.execute();
     }
@@ -45,12 +50,15 @@ class PqView extends PqMvc {
         var n: number = config.length;
         for (var i: number = 0; i < n; i++) {
             var v: ConfigVo = config[i];
+            this.configDict[v.name]=v;
             var obj: any;
             if(v.type=="sound"&&v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getSound(v.url);
             else if(v.url&&v.type=="sheet")ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.map[v.url];
-            else if(v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getResByUrl(v.url).Texture;
+            else if(v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getResByUrl(v.url).texture;
+            else if(v.resName)ResMgr.map[v.name]=RES.getRes(v.resName);
             if (this.typeFunc[v.category]) obj = this.typeFunc[v.category][0].apply(this.typeFunc[v.category][1], [v]);
             else continue;
+            if(v.category=="action")continue;
             if (v.name) {
                 obj.name = v.name;
                 this.uiDict[v.name] = obj;
@@ -68,6 +76,7 @@ class PqView extends PqMvc {
             if (v.visible == false) obj.visible = false;
             if (!v.parent||v.parent=="") this.addChild(obj);
             else this.uiDict[v.parent].addChild(obj);
+            if(v.action)v.action=this.actionDict[v.action]||v.action;
         }
     }
     protected parsingPanel(v: ConfigVo): egret.Sprite {
@@ -111,7 +120,8 @@ class PqView extends PqMvc {
                     UiHelper.drawTrapezoid(sp,[pa,pb,pc,pd],obj["color"],parseFloat(obj["alpha"]),parseFloat(obj["border"]),obj["borderColor"],obj["borderAlpha"],parseFloat(obj["radiusX"]),parseFloat(obj["radiusY"]));
                 break;
                 default:
-                    sp.graphics.drawRect(obj["x"],obj["y"],obj["width"],obj["height"]);
+                    UiHelper.drawRect(sp,obj["x"],obj["y"],obj["width"],obj["height"],obj["border"]||0,obj["borderColor"]||0x000000,obj["color"]||0x000000,obj["alpha"]||0.8);
+                    //sp.graphics.drawRect(obj["x"],obj["y"],obj["width"],obj["height"]);
                     break;
             }
             sp.graphics.endFill();
@@ -120,7 +130,11 @@ class PqView extends PqMvc {
     }
     protected parsingImg(v: ConfigVo): egret.Sprite {
         var sp: egret.Sprite = new egret.Sprite();
-        var img: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getSheet(v.sheet,this.moduleName));
+        var img: egret.Bitmap;
+        if(v.resName)img=new egret.Bitmap(RES.getRes(v.resName));
+        else if(v.url)img=ResMgr.getResByUrl(v.url);
+        else if(v.sheet)img=ResMgr.getSheet(v.sheet,this.moduleName);
+        else img=new egret.Bitmap();
         img.pixelHitTest = true
         img.smoothing=true;
         sp.addChild(img);
@@ -143,8 +157,20 @@ class PqView extends PqMvc {
         sp.touchEnabled = true;
         return sp;
     }
+    protected parssingDg(v:ConfigVo){
+        let dg = DragonHelper.createdb(v.res, v.type||"MovieClip");
+        dg.animation.play(v.action||"newAnimation");
+        dg.touchEnabled = true;
+        dg.touchChildren = false;
+        return dg;
+    }
     protected parsingTxt(v: ConfigVo): egret.TextField {
         var txt: egret.TextField = UiHelper.createTxt({ text: v.text, type: v.type,font:v.font,displayAsPassword:v.isPassword, align: v.align ? v.align : "left",bold:v.bold, color: v.color,border:v.border, size: v.size ? v.size : 18, touchEnabled: v.touchEnabled ? v.touchEnabled : false, width: v.width ? v.width : 120, height: v.height ? v.height : 30 });
+        //if(v.filter)UiHelper.filter(txt,0x9e5012,0.5,3,3,10);
+        return txt;
+    }
+    protected parsingMTxt(v: ConfigVo): PqTextField {
+        var txt: PqTextField = UiHelper.createMTxt({ text: v.text,backGround:v.backGround,backGroundColor:v.backGroundColor,borderColor:v.borderColor,tipText:v.tipText, type: v.type,font:v.font,displayAsPassword:v.isPassword, align: v.align ? v.align : "left",bold:v.bold, color: v.color,border:v.border, size: v.size ? v.size : 18, touchEnabled: v.touchEnabled ? v.touchEnabled : false, width: v.width ? v.width : 120, height: v.height ? v.height : 30 });
         //if(v.filter)UiHelper.filter(txt,0x9e5012,0.5,3,3,10);
         return txt;
     }
@@ -167,5 +193,8 @@ class PqView extends PqMvc {
         sp.alpha = (v.alpha||1);
         if (v.visible==false) sp.visible = false;
         return sp;
+    }
+    protected parsingAction(v:ConfigVo){
+        this.actionDict[v.name]=v.value;
     }
 }

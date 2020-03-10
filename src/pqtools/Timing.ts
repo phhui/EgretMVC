@@ -1,13 +1,17 @@
-class Timing {
-    static s: number = 17;//计时间隔(毫秒) 17为最佳平滑移动间隔
+class Timing{
+    static frame:number=30;
+    static farmeCount:number=0;
+    static s: number = 50;//计时间隔(毫秒)
     static t: egret.Timer;
-    static count: number = 0;
     static dict: Object;
     static inited: Boolean = false;
+    static sp:egret.Sprite;
     constructor() {
     }
     static init() {
         this.dict = {};
+        Timing.sp=new egret.Sprite();
+        Timing.sp.addEventListener(egret.Event.ENTER_FRAME,this.enterframe,this);
         this.t = new egret.Timer(this.s, 0);
         this.t.addEventListener(egret.TimerEvent.TIMER, this.run, this);
         this.t.start();
@@ -24,8 +28,8 @@ class Timing {
     static addListen(key: string, interval: number, callBack: Function, target: any, param: any = null, execNum: number = -1): void {
         if (!this.inited) this.init()
         if (this.dict[key]) return;
-        if (interval * 1000 < this.s) interval = this.s*0.001;
-        this.dict[key] = { key:key,func: callBack, target: target, param: param, time: this.count, interval: interval * 1000, execNum: execNum };
+        if (interval < this.s) interval = this.s;
+        this.dict[key] = { key:key,func: callBack, target: target, param: param, time:this.t.currentCount, interval: interval, execNum: execNum };
     }
     /**
      *创建计时器
@@ -38,7 +42,7 @@ class Timing {
     static addEnterFrame(key: string, callBack: Function, target: any, param: any = null, execNum: number = -1): void {
         if (!this.inited) this.init()
         if (this.dict[key]) return;
-        this.dict[key] = { key:key,func: callBack, target: target, param: param, time: this.count, interval: this.s, execNum: execNum };
+        this.dict[key] = { key:key,func: callBack, target: target, param: param, time: this.t.currentCount, interval: this.s, execNum: execNum };
     }
     static setTimeOut(key: string, interval: number, callBack: Function, target: any, param: any = null): void {
         Timing.addListen(key, interval, callBack, target, param, 1);
@@ -51,16 +55,22 @@ class Timing {
     static removeListen(key: string): void {
         this.dict[key] = null;
     }
+    static sys_remove_all_listen(){
+        this.dict={};
+    }
+    static enterframe(e:egret.Event){
+        this.farmeCount++;
+        
+    }
     static run(): void {
-        this.count++;
-        for (var i in this.dict) {
-            var o = this.dict[i];
-            if (o != null && o.func != null && (this.count - o.time) * this.s >= o.interval) {
-                if (o.param != null) o.func.apply(o.target,[o.param]);
-                else o.func.apply(o.target,null);
-                o.time = this.count;
+        for (let i in this.dict) {
+            let o:any = this.dict[i];
+            if (o != null && o.func != null && (this.t.currentCount - o.time) * this.s >= o.interval) {
                 if(o.execNum!=-1)o.execNum--;
                 if (o.execNum ==0) delete this.dict[o.key];
+                if (o.param != null) o.func.apply(o.target,[o.param]);
+                else o.func.apply(o.target,null);
+                o.time = this.t.currentCount;
             }
         }
     }

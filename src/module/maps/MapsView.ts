@@ -1,4 +1,4 @@
-class MapsView extends PqView{
+class MapsView extends BaseView{
     constructor(){
         super(MapsCmd.MODULE_NAME);
     }

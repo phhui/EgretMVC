@@ -27,7 +27,7 @@ class PqController implements IControl{
 				this.delayList.shift();
 			}
 		}
-		this.registerEvent();
+		if(this._inited)this.registerEvent();
 	}
 	/**发送指令到模块内部command处理**/
 	public command(name:string,param:Object=null,type:string=null):void{
@@ -43,8 +43,8 @@ class PqController implements IControl{
 		this.md.call.apply(this.md,args);
 	}
 	/**删除监听**/
-	protected removeListen(name:string,func:Function):void{
-		this.md.removeListen(name);
+	protected removeListen(name:string,func:Function=null,target:any=null):void{
+		this.md.removeListen(name,func,target);
 	}
 	/**
 	 *获取共享数据 
@@ -78,6 +78,46 @@ class PqController implements IControl{
 		this.ui=new PqView(null);
         this.ui.touchEnabled = true;
 	}
+	
+	//==================Cache===Start=====================
+	protected setCacheKey(key:string){
+		CacheMgr.self.setCacheKey(key);
+	}
+	protected removeCacheKey(){
+		CacheMgr.self.removeCacheKey();
+	}
+    /**保存缓存    
+     * saveCache(缓存名称，缓存内容，缓存有效期(分钟)-默认为0 不过期)     
+	 */
+	protected saveCache(key:string,data:any,period:number=0){
+		CacheMgr.self.saveCache(key,data,period);
+	}
+    /**获取缓存 */
+	protected getCache(key:string){
+		return CacheMgr.self.getCache(key);
+	}
+	protected removeCache(key:string){
+		CacheMgr.self.removeCache(key);
+	}
+    /**----【缓存用户数据】----    
+     * saveUserCache(缓存名称，缓存内容，缓存有效期(分钟)-默认为0 不过期)    
+     * 该方法需要确认已设置cacheKey，用于区分不同用户或ID的数据 */
+    protected saveUserCache(key:string,data:any,period:number=0){
+		CacheMgr.self.saveUserCache(key,data,period);
+    }
+	/**----【获取用户缓存】---- */
+    protected getUserCache(key:string){
+		return CacheMgr.self.getUserCache(key);
+    }
+	/**删除用户缓存 */
+    protected removeUserCache(key:string){
+        CacheMgr.self.removeUserCache(key);
+    }
+    protected clearCache(){
+		CacheMgr.self.clearCache();
+    }
+	//===================Cache===End========================
+
 	protected registerEvent(){
         this.ui.addEventListener(egret.TouchEvent.TOUCH_TAP, this.gameClick,this);
 	}

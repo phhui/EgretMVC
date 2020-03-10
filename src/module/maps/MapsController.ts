@@ -1,4 +1,4 @@
-class MapsController extends PqController{
+class MapsController extends BaseController{
     static NAME:string="MapsController";
     private pxy:MapsProxy;
     private bgDict:Object;
@@ -27,12 +27,11 @@ class MapsController extends PqController{
     }
     private showWindow(){
         if(!this.inited){
-            this.initView();
-            //this.call(SysCmd.LOAD_MODULE_RES,MapsCmd.MODULE_NAME);
+            this.call(SysCmd.LOAD_MODULE_RES,MapsCmd.MODULE_NAME);
             return;
         }
         this.call(SysCmd.ADD_TO_STAGE,this.ui);
-        this.createMap();
+        //this.createMap();
         this.call(PlayerCmd.SHOW_WINDOW);
     }
     private closeWindow(){

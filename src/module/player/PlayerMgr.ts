@@ -1,4 +1,4 @@
-class PlayerMgr extends PqMgr{
+class PlayerMgr extends BaseMgr{
     constructor(){
         super();
     }

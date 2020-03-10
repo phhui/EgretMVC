@@ -1,21 +1,44 @@
 {
-	"groups":[
-	{
-		"keys":"base",
-		"name":"preload"
-	},{
-		"keys":"Maps_module",
-		"name":"baseRes"
-	}],
-	"resources":[
-	{
-		"name":"Maps_module",
-		"type":"json",
-		"url":"config/Maps.json"
-	},
-	{
-		"name":"base",
-		"type":"sheet",
-		"url":"assets/base.json"
-	}]
+	"groups": [
+		{
+			"keys": "base,test_png,test_ske,test_tex",
+			"name": "preload"
+		},
+		{
+			"keys": "Maps_module",
+			"name": "baseRes"
+		}
+	],
+	"resources": [
+		{
+			"url": "config/Maps.json",
+			"type": "json",
+			"name": "Maps_module"
+		},
+		{
+			"url": "assets/base.json",
+			"type": "sheet",
+			"name": "base"
+		},
+		{
+			"url": "assets/bg.jpg",
+			"type": "image",
+			"name": "bg"
+		},
+		{
+			"url": "assets/dg/test_tex.png",
+			"type": "image",
+			"name": "test_png"
+		},
+		{
+			"url": "assets/dg/test_ske.json",
+			"type": "json",
+			"name": "test_ske"
+		},
+		{
+			"url": "assets/dg/test_tex.json",
+			"type": "json",
+			"name": "test_tex"
+		}
+	]
 }

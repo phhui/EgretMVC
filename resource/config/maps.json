@@ -1,3 +1,6 @@
 [
-    
+    {"name":"body","category":"panel"},
+        {"name":"scene","category":"panel","parent":"body"},
+            {"name":"bg","parent":"scene","url":"resource/assets/bg.jpg","category":"img"},
+            {"name":"item","parent":"scene","res":"test","category":"dg","x":850,"y":400,"scaleX":0.5,"scaleY":0.5}
 ]

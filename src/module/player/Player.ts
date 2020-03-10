@@ -41,7 +41,7 @@ class Player extends egret.Sprite{
     }
     public moveTo(p:egret.Point){
         this.to=p;
-        Timing.addEnterFrame("movePlayer"+this.v.name,this.move,this);
+        Timing.addEnterFrame("movePlayer",this.move,this);
     }
     private move(){
         let s:number=egret.Point.distance(new egret.Point(this.x,this.y),this.to);
@@ -54,11 +54,6 @@ class Player extends egret.Sprite{
         if(Math.abs(s)<=1){
             Timing.removeListen("movePlayer"+this.v.name);
             this.stand();
-        }
-        let n:number=Math.round(Math.random()*100);
-        if(n==2){
-            console.log("ttt");
-            Tips.create("我要长胖，我不要变瘦！",this.stage,0,this.y);
         }
     }
     public stand(){
