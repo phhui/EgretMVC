@@ -13,7 +13,7 @@ class Player extends egret.Sprite{
         this.createView();
     }
     private createView(){
-        let img:egret.Bitmap=ResMgr.getRes("base#mg2");
+        let img:egret.Bitmap=PqResMgr.getRes("base#mg2");
         this.model=new egret.Sprite();
         this.model.addChild(img);
         img.x=0-img.width/2;
@@ -22,14 +22,14 @@ class Player extends egret.Sprite{
         this.model.scaleX=this.model.scaleY=0.3;
 
         this.lfooder=new egret.Sprite();
-        this.lfooder.addChild(ResMgr.getRes("base#mgFooder"));
+        this.lfooder.addChild(PqResMgr.getRes("base#mgFooder"));
         this.model.addChild(this.lfooder);
         this.lfooder.x=-150;
         this.lfooder.y=-80;
         this.lfooder.scaleX=this.lfooder.scaleY=2;
 
         this.rfooder=new egret.Sprite();
-        this.rfooder.addChild(ResMgr.getRes("base#mgFooder"));
+        this.rfooder.addChild(PqResMgr.getRes("base#mgFooder"));
         this.model.addChild(this.rfooder);
         this.rfooder.x=80;
         this.rfooder.y=-80;

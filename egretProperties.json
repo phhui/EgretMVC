@@ -1,6 +1,6 @@
 {
-  "engineVersion": "5.2.31",
-  "compilerVersion": "5.2.31",
+  "engineVersion": "5.2.33",
+  "compilerVersion": "5.2.33",
   "template": {},
   "target": {
     "current": "web"
@@ -8,6 +8,9 @@
   "modules": [
     {
       "name": "egret"
+    },
+    {
+      "name": "eui"
     },
     {
       "name": "game"
@@ -20,9 +23,6 @@
     },
     {
       "name":"dragonBones"
-    },
-    {
-      "name": "promise"
     }
   ]
 }

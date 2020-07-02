@@ -12,7 +12,7 @@ class SoundHelper{
      * loops:播放次数
     */
     static play(name:string,loops:number=1){
-        let sound:egret.Sound=ResMgr.getSound(name);
+        let sound:egret.Sound=PqResMgr.getSound(name);
         if(!sound){
             console.log(name+" no find");
             return;

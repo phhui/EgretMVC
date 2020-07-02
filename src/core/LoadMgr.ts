@@ -40,8 +40,7 @@ class LoadMgr extends PqMvc{
         }
     }
     private getConfig(){
-        Config.configDict[this.loadList[0]]=RES.getRes(this.loadList[0]);
-        var list=RES.getRes(this.loadList[0]);
+        var list=Config.configDict[this.loadList[0]]=RES.getRes(this.loadList[0]);
         this.curList=[];
         var n: number = list.length;
         for (var i: number = 0; i < n; i++) {
@@ -59,7 +58,7 @@ class LoadMgr extends PqMvc{
         RES.getResByUrl(url,this.resLoaded,this,this.curList[this.loadIndex].type);
     }
     private resLoaded(e:any,url:string){
-        ResMgr.map[url]=e;
+        PqResMgr.dict[url]=e;
         this.loadIndex+=1;
         this.loadIndex>=this.curList.length?this.loadNextList():this.load();
     }

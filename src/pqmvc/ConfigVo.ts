@@ -1,13 +1,12 @@
 class ConfigVo{
 	public id: string;
     /**父级容器**/
-    public parent: string;
+    public pid: string;
     /**资源路径(如果是纹理则使用sheet,url留空) */
 	public url: string;
     public resName:string;
     /**纹理路径(和url只能用一个，优先使用URL) */
-    public sheet:string;
-	public name: string;
+    public source:string;
 	public x: number;
 	public y: number;
 	public alpha: number=1;

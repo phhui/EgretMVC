@@ -31,13 +31,13 @@ class PqView extends PqMvc {
         this.typeFunc[type] = [func, target];
     }
     protected getModuleRes(name:string):any{
-        return ResMgr.map[this.moduleName+"_"+name];
+        return PqResMgr.dict[this.moduleName+"_"+name];
     }
     protected getSheet(name:string):any{
         let index:number=name.indexOf('#');
         let key:string=name.substr(0,index);
         let subkey:string=name.substr(index+1);
-        let t= ResMgr.map[this.moduleName+"_"+key];
+        let t= PqResMgr.dict[this.moduleName+"_"+key];
         let texture:egret.Texture=(t&&t.getTexture(subkey))||RES.getRes(name);
         return new egret.Bitmap(texture);
     }
@@ -50,18 +50,18 @@ class PqView extends PqMvc {
         var n: number = config.length;
         for (var i: number = 0; i < n; i++) {
             var v: ConfigVo = config[i];
-            this.configDict[v.name]=v;
+            this.configDict[v.id]=v;
             var obj: any;
-            if(v.type=="sound"&&v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getSound(v.url);
-            else if(v.url&&v.type=="sheet")ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.map[v.url];
-            else if(v.url)ResMgr.map[this.moduleName+"_"+v.name]=ResMgr.getResByUrl(v.url).texture;
-            else if(v.resName)ResMgr.map[v.name]=RES.getRes(v.resName);
+            if(v.type=="sound"&&v.url)PqResMgr.dict[this.moduleName+"_"+v.id]=PqResMgr.getSound(v.url);
+            else if(v.url&&v.type=="sheet")PqResMgr.dict[this.moduleName+"_"+v.id]=PqResMgr.dict[v.url];
+            else if(v.url)PqResMgr.dict[this.moduleName+"_"+v.id]=PqResMgr.getResByUrl(v.url).texture;
+            else if(v.resName)PqResMgr.dict[v.id]=RES.getRes(v.resName);
             if (this.typeFunc[v.category]) obj = this.typeFunc[v.category][0].apply(this.typeFunc[v.category][1], [v]);
             else continue;
             if(v.category=="action")continue;
-            if (v.name) {
-                obj.name = v.name;
-                this.uiDict[v.name] = obj;
+            if (v.id) {
+                obj.name = v.id;
+                this.uiDict[v.id] = obj;
             }
             obj.x = v.x||0;
             obj.y = v.y||0;
@@ -74,16 +74,16 @@ class PqView extends PqMvc {
             obj.rotation=v.rotation||0;
             if (v.mask) obj.mask = this.uiDict[v.mask];
             if (v.visible == false) obj.visible = false;
-            if (!v.parent||v.parent=="") this.addChild(obj);
-            else this.uiDict[v.parent].addChild(obj);
+            if (!v.pid||v.pid=="") this.addChild(obj);
+            else this.uiDict[v.pid].addChild(obj);
             if(v.action)v.action=this.actionDict[v.action]||v.action;
         }
     }
     protected parsingPanel(v: ConfigVo): egret.Sprite {
         var sp: egret.Sprite = new egret.Sprite();
-        sp.name = v.name;
+        sp.name = v.id;
         if (v.url) {
-            var img: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getSheet(v.sheet,this.moduleName));
+            var img: egret.Bitmap = (v.url?PqResMgr.getResByUrl(v.url):PqResMgr.getSheet(v.source,this.moduleName));
             img.pixelHitTest = true
             sp.addChild(img);
         }
@@ -128,31 +128,31 @@ class PqView extends PqMvc {
         }
         return sp;
     }
-    protected parsingImg(v: ConfigVo): egret.Sprite {
-        var sp: egret.Sprite = new egret.Sprite();
+    protected parsingImg(v: ConfigVo): egret.Bitmap {
         var img: egret.Bitmap;
         if(v.resName)img=new egret.Bitmap(RES.getRes(v.resName));
-        else if(v.url)img=ResMgr.getResByUrl(v.url);
-        else if(v.sheet)img=ResMgr.getSheet(v.sheet,this.moduleName);
+        else if(v.url)img=PqResMgr.getResByUrl(v.url);
+        else if(v.source)img=PqResMgr.getSheet(v.source,this.moduleName);
         else img=new egret.Bitmap();
-        img.pixelHitTest = true
+        // img.pixelHitTest = true;开启会导致微信小游戏无法点击
         img.smoothing=true;
-        sp.addChild(img);
+        if(v.width)img.width=v.width;
+        if(v.height)img.height=v.height;
         img.x = 0-img.width * (v.focusX||0);
         img.y = 0-img.height * (v.focusY||0);
-        sp.touchChildren = false;
-        sp.touchEnabled = false;
-        sp.alpha = (v.alpha||1);
-        if (v.visible==false) sp.visible = false;
-        return sp;
+        img.touchEnabled = false;
+        img.alpha = (v.alpha||1);
+        if (v.visible==false) img.visible = false;
+        return img;
     }
     protected parsingBtn(v: ConfigVo): egret.Sprite {
         var sp: egret.Sprite = new egret.Sprite();
-        if(v.url||v.sheet){
-            var bm: egret.Bitmap = (v.url?ResMgr.getResByUrl(v.url):ResMgr.getSheet(v.sheet,this.moduleName));
-            bm.pixelHitTest = true;
+        if(v.url||v.source){
+            var bm: egret.Bitmap = (v.url?PqResMgr.getResByUrl(v.url):PqResMgr.getSheet(v.source,this.moduleName));
+            // bm.pixelHitTest = true;;开启会导致微信小游戏无法点击
             sp.addChild(bm);
         }
+        sp.cacheAsBitmap=true;
         sp.touchChildren = false;
         sp.touchEnabled = true;
         return sp;
@@ -166,6 +166,7 @@ class PqView extends PqMvc {
     }
     protected parsingTxt(v: ConfigVo): egret.TextField {
         var txt: egret.TextField = UiHelper.createTxt({ text: v.text, type: v.type,font:v.font,displayAsPassword:v.isPassword, align: v.align ? v.align : "left",bold:v.bold, color: v.color,border:v.border, size: v.size ? v.size : 18, touchEnabled: v.touchEnabled ? v.touchEnabled : false, width: v.width ? v.width : 120, height: v.height ? v.height : 30 });
+        txt.cacheAsBitmap=true;
         //if(v.filter)UiHelper.filter(txt,0x9e5012,0.5,3,3,10);
         return txt;
     }
@@ -195,6 +196,6 @@ class PqView extends PqMvc {
         return sp;
     }
     protected parsingAction(v:ConfigVo){
-        this.actionDict[v.name]=v.value;
+        this.actionDict[v.id]=v.value;
     }
 }

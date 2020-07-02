@@ -1,5 +1,5 @@
-class ResMgr {
-    static map: Object = {};
+class PqResMgr {
+    static dict: Object = {};
     constructor() {
     }
     static getRes(name:string):egret.Bitmap{
@@ -9,7 +9,7 @@ class ResMgr {
     /**获取透明区域穿透资源 */
     static getPixelHitRes(name:string):egret.Bitmap{
         if (!RES.getRes(name))throw new Error("资源  "+name+"  不存在！");
-        var img: egret.Bitmap = ResMgr.getRes(name);
+        var img: egret.Bitmap = PqResMgr.getRes(name);
         img.pixelHitTest = true;
         img.smoothing=true;
         return img;
@@ -18,27 +18,27 @@ class ResMgr {
         let index:number=name.indexOf('#');
         let key:string=name.substr(0,index);
         let subkey:string=name.substr(index+1);
-        let t= ResMgr.map[moduleName+"_"+key];
+        let t= PqResMgr.dict[moduleName+"_"+key];
         let texture:egret.Texture=(t&&t.getTexture(subkey))||RES.getRes(name);
         return new egret.Bitmap(texture);
     }
     static getSound(nameOrUrl:string):egret.Sound{
-        return RES.getRes(nameOrUrl)||ResMgr.map[nameOrUrl];
+        return RES.getRes(nameOrUrl)||PqResMgr.dict[nameOrUrl];
     }
     static getResByUrl(url: string): any {
-        if (ResMgr.map[url] == null&&RES.getRes(url)){
+        if (PqResMgr.dict[url] == null&&!RES.getRes(url)){
             console.log("资源不存在>>"+url);
             return new egret.Bitmap();
         }
         var bm: egret.Bitmap = new egret.Bitmap;
-        bm.texture = ResMgr.map[url]||RES.getRes(url);
+        bm.texture = PqResMgr.dict[url]||RES.getRes(url);
         return bm;
     }
     static cutResFromCache(modeuleName:string,name:string,rect:egret.Rectangle):egret.Bitmap{
         name=modeuleName+"_"+name;
-        if (ResMgr.map[name] == null) throw new Error("资源不存在>>"+name);
+        if (PqResMgr.dict[name] == null) throw new Error("资源不存在>>"+name);
         var bm: egret.Bitmap = new egret.Bitmap;
-        bm.texture = ResMgr.map[name];
+        bm.texture = PqResMgr.dict[name];
         let $drawTexture: egret.RenderTexture = new egret.RenderTexture();
         $drawTexture.drawToTexture( bm , rect , 1 );
         bm.texture = $drawTexture;
