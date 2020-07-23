@@ -106,12 +106,8 @@ class Timing{
                         delete this.timeEventList[i];
                     }
                 }
-                try{
-                    if (o.param != null) o.func.apply(o.target,[o.param]);
-                    else o.func.apply(o.target,null);
-                }catch(err){
-                    console.log("****** Timing.call.apply throw Exception in 【"+i+"】 tick ******");
-                }
+                if (o.param != null) o.func.apply(o.target,[o.param]);
+                else o.func.apply(o.target,null);
                 if (o.execNum ==0)this._freeObj(o);
                 else o.time = this.t.currentCount;
             }

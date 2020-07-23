@@ -45,11 +45,7 @@ class EventHelper{
             let list=this.listenList[key];
             for(let i:number=0;i<list.length;i++){
                 let obj:any=list[i];
-                try{
-                    obj.func.apply(obj.target,args);
-                }catch(err){
-                    console.log("****** EventHelper.call.apply throw Exception in 【"+i+"】 event ******");
-                }
+                obj.func.apply(obj.target,args);
                 if(obj.once){
                     this._freeObj(obj);
                     this.listenList[key][i]=null;
@@ -65,11 +61,7 @@ class EventHelper{
         var n: number = eventType.length;
         for (var i: number = 0; i < n; i++) {
             if ((typeof(eventType[i])=="string"&&e.target.name == eventType[i])||(typeof(eventType[i])=="object"&&e.target==eventType[i])) {
-                try{
-                    func[i].apply(target, [eventType[i], e]);
-                }catch(err){
-                    console.log("****** EventHelper.call.apply throw Exception in 【"+i+"】 event ******");
-                }
+                func[i].apply(target, [eventType[i], e]);
                 return;
             }
         }
